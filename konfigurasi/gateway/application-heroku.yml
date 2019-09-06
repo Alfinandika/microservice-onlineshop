@@ -1,0 +1,18 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+      - id: contoh
+        uri: https://example.org
+        predicates:
+        - Path=/contoh/**
+      - id: config
+        uri: lb://configserver
+        predicates:
+        - Path=/config/**
+        filters:
+        - RewritePath=/config/(?<segment>.*), /$\{segment}
+        - name: Hystrix
+          args:
+            name: fallbackcmd
+            fallbackUri: forward:/configserveroffline
